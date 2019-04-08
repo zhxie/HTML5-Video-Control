@@ -11,12 +11,19 @@ Google Chrome w/ Tampermonkey
 ## Usage
 
 `q`: Enable/Disable the script.
+
 `c`: Increase current playback speed by 0.1.
+
 `x`: Decrease current playback speed by 0.1.
+
 `z`: Change current playback speed to 2.5, or reset playback speed to normal.
+
 `Ctrl`: Change current playback speed to 2.5 when the key is pressed.
+
 `f`: Play one frame and pause.
+
 `d`: Play one frame in reverse and pause.
+
 `g`: The same as `d`.
 
 ## Limitations
