@@ -24,7 +24,7 @@ Google Chrome w/ Tampermonkey
 
 `d`: Play one frame in reverse and pause.
 
-`g`: The same as `d`.
+`g`: The same as `f`.
 
 ## Limitations
 
