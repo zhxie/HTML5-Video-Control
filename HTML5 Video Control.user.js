@@ -24,12 +24,10 @@
     $tip.style.verticalAlign = 'center';
     $tip.style.zIndex = '9999999999';
 
-    var defaultFastForwardRate = 2.5;
+    var defaultFastForwardRate = 3.0;
     var defaultFastForwardStep = 0.1;
 
-    var ctrlPressed = false;
     var scriptEnabled = true;
-    var ctrlTimeout;
     var toggleTimeout;
 
     var toggleTipView = function () {
@@ -52,25 +50,6 @@
         $tip.style.left = offset.left + 15 + 'px';
     };
 
-    var releaseFastForward = function ($ref) {
-        toggleTipView();
-        initTipViewPosition($ref);
-        ctrlPressed = false;
-        $ref.playbackRate = 1;
-        $tip.innerText = '';
-        document.body.removeChild($tip);
-    };
-
-    addEventListener('keyup', function (ev) {
-        var $ele = document.querySelector('VIDEO');
-        if ($ele) {
-            if (ctrlPressed && !ev.ctrlKey) {
-                releaseFastForward($ele);
-                ev.preventDefault();
-            }
-        }
-    });
-
     addEventListener('keydown', function (ev) {
         var $ele = document.querySelector('VIDEO');
         if ($ele) {
@@ -79,13 +58,7 @@
             if (tagName === 'INPUT' || tagName === 'TEXTAREA') return;
 
             // Block on combination key
-            var isBlock;
-            if (scriptEnabled) {
-                isBlock = ev.altKey || ev.shiftKey;
-            } else {
-                isBlock = ev.altKey || ev.shiftKey || ev.ctrlKey;
-            }
-            if (isBlock) {
+            if (ev.altKey || ev.shiftKey || ev.ctrlKey) {
                 // releaseFastForward($ele);
                 // ev.preventDefault();
                 return;
@@ -93,7 +66,6 @@
 
             toggleTipView();
             initTipViewPosition($ele);
-            ctrlPressed = false;
             switch (ev.key) {
                 case 'q':
                     if (scriptEnabled) {
@@ -103,18 +75,6 @@
                         scriptEnabled = true;
                         $tip.innerText = 'HTML5 Video Control Enabled';
                     }
-                    break;
-                case 'Control':
-                    if (!scriptEnabled) return;
-                    ctrlPressed = true;
-                    $ele.playbackRate = defaultFastForwardRate;
-                    $tip.innerText = '▷';
-                    clearTimeout(ctrlTimeout);
-                    ctrlTimeout = setTimeout(function () {
-                        if (!ctrlPressed) return;
-                        releaseFastForward($ele);
-                        ev.preventDefault();
-                    }, 1000);
                     break;
                 case 'x':
                     if (!scriptEnabled) return;
