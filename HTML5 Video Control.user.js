@@ -14,6 +14,8 @@ const DefaultFastForwardRate = 3.0;
 const DefaultFastForwardStep = 0.1;
 
 (function () {
+    "use strict";
+
     const tip = document.createElement("p");
     tip.id = "h5-video-control-tip";
     tip.style.backgroundColor = "#0000007f";
