@@ -9,7 +9,7 @@
 // @grant       none
 // ==/UserScript==
 
-(function() {
+(function () {
     var $tip = document.createElement('p');
     $tip.id = 'h5-video-control-tip';
     $tip.style.backgroundColor = '#0000007f';
@@ -32,27 +32,27 @@
     var ctrlTimeout;
     var toggleTimeout;
 
-    var toggleTipView = function() {
+    var toggleTipView = function () {
         document.body.appendChild($tip);
         if (toggleTimeout) {
             clearTimeout(toggleTimeout);
             toggleTimeout = null;
             $tip.innerText = '';
         }
-        toggleTimeout = setTimeout(function() {
+        toggleTimeout = setTimeout(function () {
             $tip.innerText = '';
             toggleTimeout = null;
             document.body.removeChild($tip);
         }, 1000);
     };
 
-    var initTipViewPosition = function($ref) {
+    var initTipViewPosition = function ($ref) {
         var offset = $ref.getBoundingClientRect();
         $tip.style.top = offset.top + 15 + 'px';
         $tip.style.left = offset.left + 15 + 'px';
     };
 
-    var releaseFastForward = function($ref) {
+    var releaseFastForward = function ($ref) {
         toggleTipView();
         initTipViewPosition($ref);
         ctrlPressed = false;
@@ -61,7 +61,7 @@
         document.body.removeChild($tip);
     };
 
-    addEventListener('keyup', function(ev) {
+    addEventListener('keyup', function (ev) {
         var $ele = document.querySelector('VIDEO');
         if ($ele) {
             if (ctrlPressed && !ev.ctrlKey) {
@@ -71,7 +71,7 @@
         }
     });
 
-    addEventListener('keydown', function(ev) {
+    addEventListener('keydown', function (ev) {
         var $ele = document.querySelector('VIDEO');
         if ($ele) {
             var activeElement = document.activeElement;
@@ -110,7 +110,7 @@
                     $ele.playbackRate = defaultFastForwardRate;
                     $tip.innerText = '▷';
                     clearTimeout(ctrlTimeout);
-                    ctrlTimeout = setTimeout(function() {
+                    ctrlTimeout = setTimeout(function () {
                         if (!ctrlPressed) return;
                         releaseFastForward($ele);
                         ev.preventDefault();
