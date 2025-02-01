@@ -1,12 +1,13 @@
 // ==UserScript==
-// @name        HTML5 Video Control
-// @namespace   HTML5VideoControl
-// @description Add keyboard shortcuts to adjust speed and control playback.
-// @version     1.3.0
-// @author      maoqiu & Sketch
-// @include     http://*/*
-// @include     https://*/*
-// @grant       none
+// @name         HTML5 Video Control
+// @namespace    https://github.com/zhxie/HTML5-Video-Control
+// @version      1.4.0
+// @author       maoqiu & Sketch
+// @description  Add keyboard shortcuts to adjust speed and control playback.
+// @homepage     https://github.com/zhxie/HTML5-Video-Control
+// @include      http://*/*
+// @include      https://*/*
+// @grant        none
 // ==/UserScript==
 
 const DefaultFastForwardRate = 3.0;
