@@ -63,38 +63,37 @@ const DefaultFastForwardStep = 0.1;
                 return;
             }
 
-            toggleTipView();
-            initTipViewPosition(ele);
+            if (ev.key === "q" || scriptEnabled) {
+                toggleTipView();
+                initTipViewPosition(ele);
+            }
+            if (ev.key === "q") {
+                if (scriptEnabled) {
+                    scriptEnabled = false;
+                    tip.innerText = "HTML5 Video Control Disabled";
+                } else {
+                    scriptEnabled = true;
+                    tip.innerText = "HTML5 Video Control Enabled";
+                }
+                ev.preventDefault();
+                return;
+            }
+            if (!scriptEnabled) {
+                return;
+            }
+
             switch (ev.key) {
-                case "q":
-                    if (scriptEnabled) {
-                        scriptEnabled = false;
-                        tip.innerText = "HTML5 Video Control Disabled";
-                    } else {
-                        scriptEnabled = true;
-                        tip.innerText = "HTML5 Video Control Enabled";
-                    }
-                    break;
                 case "x":
-                    if (!scriptEnabled) {
-                        return;
-                    }
                     if (ele.playbackRate > DefaultFastForwardStep) {
                         ele.playbackRate = (ele.playbackRate - DefaultFastForwardStep).toFixed(1);
                     }
                     tip.innerText = `Speed: ${ele.playbackRate.toFixed(1)}`;
                     break;
                 case "c":
-                    if (!scriptEnabled) {
-                        return;
-                    }
                     ele.playbackRate = (ele.playbackRate + DefaultFastForwardStep).toFixed(1);
                     tip.innerText = `Speed: ${ele.playbackRate.toFixed(1)}`;
                     break;
                 case "z":
-                    if (!scriptEnabled) {
-                        return;
-                    }
                     if (ele.playbackRate === 1) {
                         ele.playbackRate = DefaultFastForwardRate;
                     } else {
@@ -103,9 +102,6 @@ const DefaultFastForwardStep = 0.1;
                     tip.innerText = `Speed: ${ele.playbackRate.toFixed(1)}`;
                     break;
                 case "d":
-                    if (!scriptEnabled) {
-                        return;
-                    }
                     if (!ele.paused) {
                         ele.pause();
                     }
@@ -116,9 +112,6 @@ const DefaultFastForwardStep = 0.1;
                     break;
                 case "f":
                 case "g":
-                    if (!scriptEnabled) {
-                        return;
-                    }
                     if (!ele.paused) {
                         ele.pause();
                     }
