@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HTML5 Video Control
 // @namespace    https://github.com/zhxie/HTML5-Video-Control
-// @version      1.4.0
+// @version      1.5.0
 // @author       maoqiu & Sketch
 // @description  Add keyboard shortcuts to adjust speed and control playback.
 // @homepage     https://github.com/zhxie/HTML5-Video-Control
@@ -16,72 +16,46 @@ const DefaultFastForwardStep = 0.1;
 (function () {
     "use strict";
 
-    const tip = document.createElement("p");
-    tip.id = "h5-video-control-tip";
-    tip.style.backgroundColor = "#0000007f";
-    tip.style.boxSizing = "border-box";
-    tip.style.borderRadius = "4px";
-    tip.style.color = "white";
-    tip.style.fontSize = "28px";
-    tip.style.padding = "2px 8px 2px 8px";
-    tip.style.position = "fixed";
-    tip.style.textShadow = "1px 1px black, -1px 1px black, 1px -1px black, -1px -1px black";
-    tip.style.verticalAlign = "center";
-    tip.style.zIndex = "9999999999";
-
-    let scriptEnabled = true;
-
-    let toggleTimeout;
-    const toggleTipView = () => {
-        document.body.appendChild(tip);
-        if (toggleTimeout) {
-            clearTimeout(toggleTimeout);
-            toggleTimeout = null;
-            tip.innerText = "";
+    let activeVideo = null;
+    addEventListener("click", function (e) {
+        const video = e.target.closest("video");
+        if (video) {
+            activeVideo = video;
         }
-        toggleTimeout = setTimeout(function () {
-            tip.innerText = "";
-            toggleTimeout = null;
-            document.body.removeChild(tip);
-        }, 1000);
-    };
+    });
 
-    const initTipViewPosition = (ele) => {
-        const offset = ele.getBoundingClientRect();
-        tip.style.top = offset.top + 15 + "px";
-        tip.style.left = offset.left + 15 + "px";
-    };
-
+    let enabled = true;
     addEventListener("keydown", (ev) => {
-        const ele = document.querySelector("VIDEO");
+        // Block on inputs.
+        const tagName = document.activeElement.tagName;
+        if (tagName === "INPUT" || tagName === "TEXTAREA") {
+            return;
+        }
+
+        // Block on combination keys.
+        if (ev.altKey || ev.shiftKey || ev.ctrlKey || ev.metaKey) {
+            return;
+        }
+
+        // Select video.
+        let ele = activeVideo;
+        if (!ele) {
+            ele = document.querySelector("VIDEO");
+        }
+
         if (ele) {
-            // Block on inputs.
-            const tagName = document.activeElement.tagName;
-            if (tagName === "INPUT" || tagName === "TEXTAREA") {
-                return;
-            }
-
-            // Block on combination keys.
-            if (ev.altKey || ev.shiftKey || ev.ctrlKey || ev.metaKey) {
-                return;
-            }
-
-            if (ev.key === "q" || scriptEnabled) {
-                toggleTipView();
-                initTipViewPosition(ele);
-            }
             if (ev.key === "q") {
-                if (scriptEnabled) {
-                    scriptEnabled = false;
-                    tip.innerText = "HTML5 Video Control Disabled";
+                if (enabled) {
+                    enabled = false;
+                    showOverlay(ele, "HTML5 Video Control Disabled");
                 } else {
-                    scriptEnabled = true;
-                    tip.innerText = "HTML5 Video Control Enabled";
+                    enabled = true;
+                    showOverlay(ele, "HTML5 Video Control Enabled");
                 }
                 ev.preventDefault();
                 return;
             }
-            if (!scriptEnabled) {
+            if (!enabled) {
                 return;
             }
 
@@ -90,11 +64,11 @@ const DefaultFastForwardStep = 0.1;
                     if (ele.playbackRate > DefaultFastForwardStep) {
                         ele.playbackRate = (ele.playbackRate - DefaultFastForwardStep).toFixed(1);
                     }
-                    tip.innerText = `Speed: ${ele.playbackRate.toFixed(1)}`;
+                    showOverlay(ele, `Speed: ${ele.playbackRate.toFixed(1)}`);
                     break;
                 case "c":
                     ele.playbackRate = (ele.playbackRate + DefaultFastForwardStep).toFixed(1);
-                    tip.innerText = `Speed: ${ele.playbackRate.toFixed(1)}`;
+                    showOverlay(ele, `Speed: ${ele.playbackRate.toFixed(1)}`);
                     break;
                 case "z":
                     if (ele.playbackRate === 1) {
@@ -102,7 +76,7 @@ const DefaultFastForwardStep = 0.1;
                     } else {
                         ele.playbackRate = 1;
                     }
-                    tip.innerText = `Speed: ${ele.playbackRate.toFixed(1)}`;
+                    showOverlay(ele, `Speed: ${ele.playbackRate.toFixed(1)}`);
                     break;
                 case "d":
                     if (!ele.paused) {
@@ -111,7 +85,7 @@ const DefaultFastForwardStep = 0.1;
                     if (ele.currentTime > 1) {
                         ele.currentTime -= Number(1 / 30);
                     }
-                    tip.innerText = "Frame: " + (30 * ele.currentTime).toFixed(0);
+                    showOverlay(ele, "Frame: " + (30 * ele.currentTime).toFixed(0));
                     break;
                 case "f":
                 case "g":
@@ -119,7 +93,7 @@ const DefaultFastForwardStep = 0.1;
                         ele.pause();
                     }
                     ele.currentTime += Number(1 / 30);
-                    tip.innerText = "Frame: " + (30 * ele.currentTime).toFixed(0);
+                    showOverlay(ele, "Frame: " + (30 * ele.currentTime).toFixed(0));
                     break;
                 default:
                     break;
@@ -127,4 +101,25 @@ const DefaultFastForwardStep = 0.1;
             ev.preventDefault();
         }
     });
+
+    const showOverlay = (ele, text) => {
+        const overlay = document.createElement("div");
+        overlay.textContent = text;
+        overlay.style.position = "absolute";
+        overlay.style.top = "15px";
+        overlay.style.left = "15px";
+        overlay.style.padding = "2px 8px";
+        overlay.style.background = "#0000007f";
+        overlay.style.color = "white";
+        overlay.style.fontSize = "28px";
+        overlay.style.borderRadius = "4px";
+        overlay.style.zIndex = "9999999999";
+
+        ele.parentElement.style.position = "relative";
+        ele.parentElement.appendChild(overlay);
+
+        setTimeout(() => {
+            overlay.remove();
+        }, 1000);
+    };
 })();
